@@ -1,84 +1,83 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
+GeoGuesser, a popular game that allows players to guess locations from Google Street View images.
 
 ### API Endpoint URL:
-`POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
+`GET https://www.geoguessr.com/api/v3/profiles/` returns all information about logged in user.
 
 **Sample JSON Response:**
 The api requests returns something like this:
 ```json
 {
-  "addressType": "(U) Unicast",
-  "areaCode": "(92) 042",
-  "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "954124",
-  "category": "(IAB19-18) Internet Technology",
-  "cityName": "Lahore",
-  "coordinates": "94.549677, 27.343556",
-  "countryCode": "PK",
-  "countryName": "Pakistan",
-  "district": "Lahore District",
-  "domain": "cyber.net.pk",
-  "elevation": "218m",
-  "isProxy": "No",
-  "isp": "Cyber Internet Services Pakistan",
-  "lastSeen": "-",
-  "localTime": "2024-10-20 19:16:04",
-  "mcc": "-",
-  "mnc": "-",
-  "mobileBrand": "-",
-  "netSpeed": "DSL",
-  "proxyAsName": "-",
-  "proxyAsNumber": "-",
-  "proxyProvider": "-",
-  "proxyType": "-",
-  "regionName": "Punjab",
-  "threat": "-",
-  "timeZone": "UTC +05:00",
-  "usageType": "(ISP) Fixed Line ISP",
-  "weather": "Lahore (PKXX0011)",
-  "zipCode": "24550"
+    "user": {
+        "isProUser": false,
+        ... // other fields
+        },
+        ... // other fields 
+    "playingRestriction": {
+        ...
+    },
+    "email": "logegot648@abaot.com",
+    "isEmailChangeable": true,
+    "isEmailVerified": false,
+    "emailNotificationSettings": {
+       ...
+    },
+    "isBanned": false,
+    "chatBan": false,
+    ...
 }
 ```
 
 ### Technical Breakdown:
-This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
+To verify if the player is a pro and not banned, the API response is checked for the following conditions:
+
+ 1. The **isProUser** field must be **true**.
+2. The **isBanned** field must be **false**.
+
+The api returns all information about user, like his scores etc, making verification very simple and opens alot of different ways to handle it.
 
 ### Schema Code:
 ```json
 {
-  "issuer": "ip2location",
-  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
-  "website": "https://www.ip2location.com/",
+  "issuer": "GeoGuesser",
+  "desc": "Check if a gamer on popular geoguesser game is a pro player. Also check if he is not banned so he can enter secret society of pro players.",
+  "website": "https://www.geoguessr.com/me/achievements",
   "APIs": [
     {
-      "host": "api.ip2location.io",
+      "host": "www.geoguessr.com",
       "intercept": {
-        "url": "query/",
-        "method": "POST"
+        "url": "/api/v3/profiles/",
+        "method": "GET"
       },
       "assert": [
         {
-          "key": "cityName",
-          "value": "Lahore",
+          "key": "user|isProUser",
+          "value": "true",
+          "operation": "="
+        },
+        {
+          "key": "isBanned",
+          "value": "false",
           "operation": "="
         }
       ],
-      "nullifier": "coordinates"
+      "nullifier": "user"
     }
   ],
   "HRCondition": [
-    "Person must live in Lahore"
+    "Check pro level and must not be banned"
   ],
   "tips": {
-    "message": "Just wait for website to load"
+    "message": "When you successfully log in, please click the 'Start' button to initiate the verification process."
   },
-  "category": "Legal Identity",
-  "id": "0xbe025484b1c646048ca9d763905c82e2"
+  "category": "Game",
+  "id": "0xdd03b8e31c14400d88b4ec9a77639c5d"
 }
+
 ```
 
 ### Optional - Demo/Test Case:
 This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
 
-![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
+![image](https://github.com/user-attachments/assets/66a4ca0d-7916-4d9f-883f-531e7a1e53bb)
+
