@@ -1,84 +1,91 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
+Gmail. A email serice provider where users can send and receive emails.
 
 ### API Endpoint URL:
-`POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
-
+`POST https://mail.google.com/sync/u/0/i/fd` returns data about current opened email from inbox.
 **Sample JSON Response:**
-The api requests returns something like this:
+The api repose is very complicated, but ofcouse the structure is always same. We can also get the subject, header etc. For simplicity, we are just taking senders email.
 ```json
-{
-  "addressType": "(U) Unicast",
-  "areaCode": "(92) 042",
-  "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "954124",
-  "category": "(IAB19-18) Internet Technology",
-  "cityName": "Lahore",
-  "coordinates": "94.549677, 27.343556",
-  "countryCode": "PK",
-  "countryName": "Pakistan",
-  "district": "Lahore District",
-  "domain": "cyber.net.pk",
-  "elevation": "218m",
-  "isProxy": "No",
-  "isp": "Cyber Internet Services Pakistan",
-  "lastSeen": "-",
-  "localTime": "2024-10-20 19:16:04",
-  "mcc": "-",
-  "mnc": "-",
-  "mobileBrand": "-",
-  "netSpeed": "DSL",
-  "proxyAsName": "-",
-  "proxyAsNumber": "-",
-  "proxyProvider": "-",
-  "proxyType": "-",
-  "regionName": "Punjab",
-  "threat": "-",
-  "timeZone": "UTC +05:00",
-  "usageType": "(ISP) Fixed Line ISP",
-  "weather": "Lahore (PKXX0011)",
-  "zipCode": "24550"
-}
+[
+  [
+    [
+      "thread-f:1808125701848709714",
+      [
+        ...
+      ],
+      [
+        [
+          "msg-f:1808125701848709714",
+          [1, "noreply@discord.com", "Discord"]
+        ],
+        ...
+      ],
+      null,
+      863169
+    ]
+  ],
+  ...
+]
+
 ```
 
 ### Technical Breakdown:
-This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
+So the user can get access to email if he received it. And if he had reeceived he, then he can open it and he gets api response with above data. In this way we can verify if someone got email like a invitation or verification etc without revealing their true identity. Imaginge getting into a party without giving away any identity just because you got an email in your inbox.
 
 ### Schema Code:
 ```json
 {
-  "issuer": "ip2location",
-  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
-  "website": "https://www.ip2location.com/",
+  "issuer": "Gmail",
+  "desc": "Email manager, this checks if someone received an email from discord",
+  "website": "https://mail.google.com/mail/u/0/#inbox",
   "APIs": [
     {
-      "host": "api.ip2location.io",
+      "host": "mail.google.com",
       "intercept": {
-        "url": "query/",
-        "method": "POST"
+        "url": "/sync/u/0/i/fd",
+        "method": "POST",
+        "query": [
+          {
+            "hl": "en",
+            "verify": true
+          },
+          {
+            "c": "0",
+            "verify": true
+          },
+          {
+            "rt": "r",
+            "verify": true
+          },
+          {
+            "pt": "ji",
+            "verify": true
+          }
+        ]
       },
       "assert": [
         {
-          "key": "cityName",
-          "value": "Lahore",
+          "key": "1|0|1|1|0|1|1",
+          "value": "noreply@discord.com",
           "operation": "="
         }
-      ],
-      "nullifier": "coordinates"
+      ]
     }
   ],
   "HRCondition": [
-    "Person must live in Lahore"
+    "Must receive an email from discord."
   ],
   "tips": {
-    "message": "Just wait for website to load"
+    "message": "When you successfully log in, please click the discord email you want to verify to initiate the verification process."
   },
-  "category": "Legal Identity",
-  "id": "0xbe025484b1c646048ca9d763905c82e2"
+  "category": "Social",
+  "id": "0x21f75b60262047c0a2d7fe9e5941b2db"
 }
+
 ```
 
 ### Optional - Demo/Test Case:
 This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
 
-![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
+![image](https://github.com/user-attachments/assets/580b2174-b85d-4cd7-a390-896a7b147e4f)
+
