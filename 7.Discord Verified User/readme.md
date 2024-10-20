@@ -1,84 +1,78 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
+Discord, a popular communication platform for gamers and communities.
 
 ### API Endpoint URL:
-`POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
+`GET https://discord.com/api/v9/users/@me` returns a JSON response with details about current logged in user.
 
 **Sample JSON Response:**
 The api requests returns something like this:
 ```json
 {
-  "addressType": "(U) Unicast",
-  "areaCode": "(92) 042",
-  "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "954124",
-  "category": "(IAB19-18) Internet Technology",
-  "cityName": "Lahore",
-  "coordinates": "94.549677, 27.343556",
-  "countryCode": "PK",
-  "countryName": "Pakistan",
-  "district": "Lahore District",
-  "domain": "cyber.net.pk",
-  "elevation": "218m",
-  "isProxy": "No",
-  "isp": "Cyber Internet Services Pakistan",
-  "lastSeen": "-",
-  "localTime": "2024-10-20 19:16:04",
-  "mcc": "-",
-  "mnc": "-",
-  "mobileBrand": "-",
-  "netSpeed": "DSL",
-  "proxyAsName": "-",
-  "proxyAsNumber": "-",
-  "proxyProvider": "-",
-  "proxyType": "-",
-  "regionName": "Punjab",
-  "threat": "-",
-  "timeZone": "UTC +05:00",
-  "usageType": "(ISP) Fixed Line ISP",
-  "weather": "Lahore (PKXX0011)",
-  "zipCode": "24550"
+    "id": "something",
+    "username": "something",
+    "avatar": null,
+    "discriminator": "0",
+    "public_flags": 0,
+    "flags": 0,
+    "banner": null,
+    "accent_color": null,
+    "global_name": "ijlal",
+    "avatar_decoration_data": null,
+    "banner_color": null,
+    "clan": null,
+    "mfa_enabled": false,
+    "locale": "en-US",
+    "premium_type": 0,
+    "email": "something hidden",
+    "verified": true,  // here it checks if user verified
+    "phone": "hidden",
+    "nsfw_allowed": true,
+    "linked_users": [],
+    "bio": "",
+    "authenticator_types": []
 }
 ```
 
 ### Technical Breakdown:
-This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
+To verify if the user has a proper and verified account, the API response is checked for the following conditions:
 
+**The verified field must be true.**
 ### Schema Code:
 ```json
 {
-  "issuer": "ip2location",
-  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
-  "website": "https://www.ip2location.com/",
+  "issuer": "Discord",
+  "desc": "It is confirmed user has a proper account, which has been verified from Discord",
+  "website": "https://discord.com",
   "APIs": [
     {
-      "host": "api.ip2location.io",
+      "host": "discord.com",
       "intercept": {
-        "url": "query/",
-        "method": "POST"
+        "url": "api/v9/users/@me",
+        "method": "GET"
       },
       "assert": [
         {
-          "key": "cityName",
-          "value": "Lahore",
+          "key": "verified",
+          "value": "true",
           "operation": "="
         }
       ],
-      "nullifier": "coordinates"
+      "nullifier": "id"
     }
   ],
   "HRCondition": [
-    "Person must live in Lahore"
+    "Discord verified Account Owner"
   ],
   "tips": {
-    "message": "Just wait for website to load"
+    "message": "When you successfully log in, please click your account on the bottom left corner and wait."
   },
-  "category": "Legal Identity",
-  "id": "0xbe025484b1c646048ca9d763905c82e2"
+  "category": "Social",
+  "id": "0xb74ada84a6f44b5f969309df6697bfb0"
 }
+
 ```
 
 ### Optional - Demo/Test Case:
 This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
 
-![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
+![image](https://github.com/user-attachments/assets/6731d409-79a3-47fb-a768-bb9dbaf405d9)
