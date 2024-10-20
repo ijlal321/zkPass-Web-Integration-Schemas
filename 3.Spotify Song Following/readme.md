@@ -1,84 +1,90 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
+Spotify, a music streaming service. Here there are users who listens to song and artists who publishes their song.
 
 ### API Endpoint URL:
-`POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
+`GET https://api-partner.spotify.com/pathfinder/v1/query` returns track information, with key fields we are interested in being trackUnion.saved.
 
 **Sample JSON Response:**
 The api requests returns something like this:
 ```json
 {
-  "addressType": "(U) Unicast",
-  "areaCode": "(92) 042",
-  "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "954124",
-  "category": "(IAB19-18) Internet Technology",
-  "cityName": "Lahore",
-  "coordinates": "94.549677, 27.343556",
-  "countryCode": "PK",
-  "countryName": "Pakistan",
-  "district": "Lahore District",
-  "domain": "cyber.net.pk",
-  "elevation": "218m",
-  "isProxy": "No",
-  "isp": "Cyber Internet Services Pakistan",
-  "lastSeen": "-",
-  "localTime": "2024-10-20 19:16:04",
-  "mcc": "-",
-  "mnc": "-",
-  "mobileBrand": "-",
-  "netSpeed": "DSL",
-  "proxyAsName": "-",
-  "proxyAsNumber": "-",
-  "proxyProvider": "-",
-  "proxyType": "-",
-  "regionName": "Punjab",
-  "threat": "-",
-  "timeZone": "UTC +05:00",
-  "usageType": "(ISP) Fixed Line ISP",
-  "weather": "Lahore (PKXX0011)",
-  "zipCode": "24550"
+  "data": {
+    "trackUnion": {
+      "id": "1jLsirPDkUS2g4gnkYua58",
+      "name": "Ignite",
+      "saved": false,
+      "playcount": "355297545",
+      "playability": {
+        "playable": true,
+        "reason": "PLAYABLE"
+      },
+      "firstArtist": {
+        "items": [
+          {
+            "profile": { "name": "Alan Walker" }
+          }
+        ]
+      },
+      "uri": "spotify:track:1jLsirPDkUS2g4gnkYua58"
+    }
+  }
 }
+
 ```
 
 ### Technical Breakdown:
-This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
+This schema integrates Spotify's API to check if a user has saved or followed the track "Ignite" by Alan Walker in their library. The key field of interest is trackUnion.saved, which determines whether the user has the track in their saved list.
 
 ### Schema Code:
 ```json
 {
-  "issuer": "ip2location",
-  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
-  "website": "https://www.ip2location.com/",
+  "issuer": "Spotify",
+  "desc": "Prove you are following Ignite Song by Alan Walker",
+  "website": "https://open.spotify.com/track/1jLsirPDkUS2g4gnkYua58",
   "APIs": [
     {
-      "host": "api.ip2location.io",
+      "host": "api-partner.spotify.com",
       "intercept": {
-        "url": "query/",
-        "method": "POST"
+        "url": "pathfinder/v1/query",
+        "method": "GET",
+        "query": [
+          {
+            "operationName": "getTrack",
+            "verify": false
+          },
+          {
+            "variables": "%7B%22uri%22%3A%22spotify%3Atrack%3A1jLsirPDkUS2g4gnkYua58%22%7D",
+            "verify": true
+          },
+          {
+            "extensions": "%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22ae85b52abb74d20a4c331d4143d4772c95f34757bfa8c625474b912b9055b5c0%22%7D%7D",
+            "verify": true
+          }
+        ]
       },
       "assert": [
         {
-          "key": "cityName",
-          "value": "Lahore",
+          "key": "data|trackUnion|saved",
+          "value": "true",
           "operation": "="
         }
-      ],
-      "nullifier": "coordinates"
+      ]
     }
   ],
   "HRCondition": [
-    "Person must live in Lahore"
+    "Spotify Account Owner"
   ],
   "tips": {
-    "message": "Just wait for website to load"
+    "message": "When you successfully log in, please click the 'Start' button to initiate the verification process."
   },
-  "category": "Legal Identity",
-  "id": "0xbe025484b1c646048ca9d763905c82e2"
+  "category": "Social",
+  "id": "0xe1f704dd4c6943299c675b28221855ee"
 }
+
 ```
 
 ### Optional - Demo/Test Case:
-This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
+This has numerous usecases in real world. I have attested a schema validator (extension) screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
 
-![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
+![image](https://github.com/user-attachments/assets/07d00c58-cf9e-4f87-8622-5867968d4ea4)
+
