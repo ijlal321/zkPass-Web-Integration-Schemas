@@ -1,19 +1,20 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data based on IP addresses.
+IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
 
 ### API Endpoint URL:
 `POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
 
 **Sample JSON Response:**
+The api requests returns something like this:
 ```json
 {
   "addressType": "(U) Unicast",
   "areaCode": "(92) 042",
   "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "9541",
+  "asNumber": "954124",
   "category": "(IAB19-18) Internet Technology",
   "cityName": "Lahore",
-  "coordinates": "31.549677, 74.343556",
+  "coordinates": "94.549677, 27.343556",
   "countryCode": "PK",
   "countryName": "Pakistan",
   "district": "Lahore District",
@@ -36,18 +37,18 @@ IP2Location, a platform providing geolocation data based on IP addresses.
   "timeZone": "UTC +05:00",
   "usageType": "(ISP) Fixed Line ISP",
   "weather": "Lahore (PKXX0011)",
-  "zipCode": "55110"
+  "zipCode": "24550"
 }
 ```
 
 ### Technical Breakdown:
-The schema integrates IP2Location API with the zkPass framework to verify users based on geographic location, using cityName and coordinates for validation.
+This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
 
 ### Schema Code:
 ```json
 {
   "issuer": "ip2location",
-  "desc": "The platform to ask questions and connect with people who contribute unique insights and quality answers.",
+  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
   "website": "https://www.ip2location.com/",
   "APIs": [
     {
@@ -67,10 +68,10 @@ The schema integrates IP2Location API with the zkPass framework to verify users 
     }
   ],
   "HRCondition": [
-    "Quora Account Owner"
+    "Person must live in Lahore"
   ],
   "tips": {
-    "message": "When you successfully log in, please click the 'Start' button to initiate the verification process."
+    "message": "Just wait for website to load"
   },
   "category": "Legal Identity",
   "id": "0xbe025484b1c646048ca9d763905c82e2"
@@ -78,4 +79,6 @@ The schema integrates IP2Location API with the zkPass framework to verify users 
 ```
 
 ### Optional - Demo/Test Case:
-A test case simulating the verification of a user based in Lahore, showing how the schema processes the data and validates against IP2Location.
+This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass.
+
+![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
