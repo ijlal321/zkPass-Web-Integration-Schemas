@@ -1,84 +1,88 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
+Discord, a popular communication platform for gamers and communities.
 
 ### API Endpoint URL:
-`POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
+`GET https://discord.com/api/v9/channels/1278648011345629232/messages` returns messages in a server which user can access only if he is part of that server.
 
 **Sample JSON Response:**
 The api requests returns something like this:
 ```json
-{
-  "addressType": "(U) Unicast",
-  "areaCode": "(92) 042",
-  "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "954124",
-  "category": "(IAB19-18) Internet Technology",
-  "cityName": "Lahore",
-  "coordinates": "94.549677, 27.343556",
-  "countryCode": "PK",
-  "countryName": "Pakistan",
-  "district": "Lahore District",
-  "domain": "cyber.net.pk",
-  "elevation": "218m",
-  "isProxy": "No",
-  "isp": "Cyber Internet Services Pakistan",
-  "lastSeen": "-",
-  "localTime": "2024-10-20 19:16:04",
-  "mcc": "-",
-  "mnc": "-",
-  "mobileBrand": "-",
-  "netSpeed": "DSL",
-  "proxyAsName": "-",
-  "proxyAsNumber": "-",
-  "proxyProvider": "-",
-  "proxyType": "-",
-  "regionName": "Punjab",
-  "threat": "-",
-  "timeZone": "UTC +05:00",
-  "usageType": "(ISP) Fixed Line ISP",
-  "weather": "Lahore (PKXX0011)",
-  "zipCode": "24550"
-}
+[
+    {
+        "type": 7,
+        "content": "",
+        "mentions": [],
+        "mention_roles": [],
+        "attachments": [],
+        "embeds": [],
+        "timestamp": "2024-09-27T18:16:27.367000+00:00",
+        "edited_timestamp": null,
+        "flags": 0,
+        "components": [],
+        "id": "1289289570155761877",
+        "channel_id": "1278648011345629232",
+        "author": {
+            "id": "878571462586429460",
+            "username": "chrisasek",
+            "avatar": "50522f7faafa43b874e3b250cf5dda5c",
+            "discriminator": "0",
+            "public_flags": 0,
+            "flags": 0,
+            "banner": null,
+            "accent_color": null,
+            "global_name": "chrisasek",
+            "avatar_decoration_data": null,
+            "banner_color": null,
+            "clan": null
+        },
+        "pinned": false,
+        "mention_everyone": false,
+        "tts": false
+    },
+    ...
+]
+
 ```
 
 ### Technical Breakdown:
-This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
+A user can only access messages of a discord server if he is part of a server. If user successfully loads all messages from a server, means he is part of that server.
 
 ### Schema Code:
 ```json
 {
-  "issuer": "ip2location",
-  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
-  "website": "https://www.ip2location.com/",
+  "issuer": "Discord",
+  "desc": "It is confirmed user is part of a specific discord group",
+  "website": "https://discord.com/channels/1278648011345629228/1278648011345629232",
   "APIs": [
     {
-      "host": "api.ip2location.io",
+      "host": "discord.com",
       "intercept": {
-        "url": "query/",
-        "method": "POST"
+        "url": "api/v9/channels/1278648011345629232/messages",
+        "method": "GET"
       },
       "assert": [
         {
-          "key": "cityName",
-          "value": "Lahore",
-          "operation": "="
+          "key": "0",
+          "value": "null",
+          "operation": "!="
         }
-      ],
-      "nullifier": "coordinates"
+      ]
     }
   ],
   "HRCondition": [
-    "Person must live in Lahore"
+    "Discord Group"
   ],
   "tips": {
-    "message": "Just wait for website to load"
+    "message": "Wait at least 3 seconds, and give it time to load."
   },
-  "category": "Legal Identity",
-  "id": "0xbe025484b1c646048ca9d763905c82e2"
+  "category": "Social",
+  "id": "0x4dec5bd1c63b4572bf1a3ce48641ec99"
 }
+
 ```
 
 ### Optional - Demo/Test Case:
 This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
 
-![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
+![image](https://github.com/user-attachments/assets/22c5debf-05f0-4952-a774-d0c5690d0c28)
+
