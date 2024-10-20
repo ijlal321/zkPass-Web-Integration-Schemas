@@ -1,84 +1,78 @@
 ### Data Source Name:
-IP2Location, a platform providing geolocation data. Like city , country, postal code etc.
+Udemy, a platform providing online courses for various topics, with verification for specific course purchases.
 
 ### API Endpoint URL:
-`POST https://api.ip2location.io/query/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
+`GET https://www.udemy.com/api-2.0/course-landing-components/4939836/me/` returns a JSON response with details such as IP address information, city, coordinates, and ISP details.
 
 **Sample JSON Response:**
-The api requests returns something like this:
+The api requests returns data with alot of keys. What we are intrested in is this **Purchsse** field something like this:
 ```json
 {
-  "addressType": "(U) Unicast",
-  "areaCode": "(92) 042",
-  "asName": "Cyber Internet Services Pvt Ltd.",
-  "asNumber": "954124",
-  "category": "(IAB19-18) Internet Technology",
-  "cityName": "Lahore",
-  "coordinates": "94.549677, 27.343556",
-  "countryCode": "PK",
-  "countryName": "Pakistan",
-  "district": "Lahore District",
-  "domain": "cyber.net.pk",
-  "elevation": "218m",
-  "isProxy": "No",
-  "isp": "Cyber Internet Services Pakistan",
-  "lastSeen": "-",
-  "localTime": "2024-10-20 19:16:04",
-  "mcc": "-",
-  "mnc": "-",
-  "mobileBrand": "-",
-  "netSpeed": "DSL",
-  "proxyAsName": "-",
-  "proxyAsNumber": "-",
-  "proxyProvider": "-",
-  "proxyType": "-",
-  "regionName": "Punjab",
-  "threat": "-",
-  "timeZone": "UTC +05:00",
-  "usageType": "(ISP) Fixed Line ISP",
-  "weather": "Lahore (PKXX0011)",
-  "zipCode": "24550"
+  "purchase": {
+    "data": {
+      "is_valid_student": false,
+      "purchase_date": null,
+      "is_in_subscription": false,
+      "show_discount_info": true
+    },
+    "course_id": 950390,
+    "is_free_for_organization": false,
+    "is_in_subscription": false,
+    "is_organization_only": false,
+    "is_valid_student": false
+  }
+  ... {more data, not important here}
 }
+
 ```
 
 ### Technical Breakdown:
-This will allow anyone to prove they are currently in a certain area. If we have our coordinates (provided by browser) or Ip address, we can get our current location by services like the one used in this case. Hence we can prove our location. This can be used in situation when hey, are you currently is US ? then you may enter... scenerio.
+This purchase date is only not null when someone has bought the course. Hence this will prove if a user is a valid student or not.
 
 ### Schema Code:
 ```json
 {
-  "issuer": "ip2location",
-  "desc": "Allows users to prove their Geographical Location. In this example, checking if user Lives in Lahore. For simplicity, we are just checking city for now.",
-  "website": "https://www.ip2location.com/",
+  "issuer": "Udemy",
+  "desc": "This will prove if you are a student of this sample Udemy course. i.e. you have bought it.",
+  "website": "https://www.udemy.com/course/unity-multiplayer-blockchain-game-course/?couponCode=24T1MT101824",  // coupon code is optional, because when loading some courses, udemy automatically applies some coupons. But this will also work without it
   "APIs": [
     {
-      "host": "api.ip2location.io",
+      "host": "www.udemy.com",
       "intercept": {
-        "url": "query/",
-        "method": "POST"
+        "url": "api-2.0/course-landing-components/4939836/me/",
+        "method": "GET",
+        "query": [
+          { // coupon code is optional, because when loading some courses, udemy automatically applies some coupons. But this will also work without it
+            "couponCode": "24T1MT101824",     
+            "components": "purchase,add_to_cart,buy_button,discount_expiration,price_text,lifetime_access_context",
+            "verify": true
+          }
+        ]
       },
       "assert": [
         {
-          "key": "cityName",
-          "value": "Lahore",
-          "operation": "="
+          "key": "purchase|data|purchase_date",
+          "value": "null",
+          "operation": "!="
         }
       ],
-      "nullifier": "coordinates"
+      "nullifier": "purchase|data|pricing_result"
     }
   ],
   "HRCondition": [
-    "Person must live in Lahore"
+    "Udemy Course Student"
   ],
   "tips": {
     "message": "Just wait for website to load"
   },
-  "category": "Legal Identity",
-  "id": "0xbe025484b1c646048ca9d763905c82e2"
+  "category": "Educational",
+  "id": "0x14b6c11171a6424ea1da58ff2489262c"
 }
+
 ```
 
 ### Optional - Demo/Test Case:
 This has numerous usecases in real world. I have attested a schema validator screenshot to prove this schema is valid and it works and adheres to guidelines and protocols set by zkPass. It works fully well with provided data source,
 
-![image](https://github.com/user-attachments/assets/959bad0e-51e2-4412-ae20-618d4828ea4f)
+![image](https://github.com/user-attachments/assets/4978b8bb-0187-4001-949e-e97d58f70e52)
+
